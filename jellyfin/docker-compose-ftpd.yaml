@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  proftpd:
+    image: kibatic/proftpd
+    network_mode: "host"
+    restart: unless-stopped
+    environment:
+      FTP_LIST: "ruslan1122:ruslan1122"
+    volumes:
+      - ./movies:/home/ruslan1122
+

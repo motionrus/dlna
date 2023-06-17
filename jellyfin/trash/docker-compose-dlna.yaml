@@ -1,0 +1,52 @@
+---
+version: "3.0"
+services:
+  torrent:
+    user: root
+    image: wernight/qbittorrent
+    ports:
+      - 8080:8080
+      - 6881:6881/tcp
+      - 6881:6881/udp
+    volumes:
+      - ./config:/config
+      - ./torrents:/torrents
+      - ./movies:/downloads
+    restart: unless-stopped
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    networks:
+      - macvlan
+      - default
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Moscow
+      - JELLYFIN_PublishedServerUrl=192.168.31.2 #optional
+    volumes:
+      - ./library:/config
+      - ./tvseries:/data/tvshows
+      - ./movies:/data/movies
+    #ports:
+    #  - 8096:8096
+    #  - 8920:8920 #optional
+    #  - 7359:7359/udp #optional
+    #  - 1900:1900/udp #optional
+    restart: unless-stopped
+
+
+networks:
+  macvlan:
+    driver: macvlan
+    driver_opts:
+      parent: eno1 # replace with your host interface / vlan to use
+    ipam:
+      config:
+        - subnet: 192.168.31.0/24 # docker will assign ip addresses from this subnet,
+                                  # check your DHCP configuration
+  default:
+    external:
+      name: "services-network"
+

@@ -1,0 +1,16 @@
+---
+version: "2.1"
+services:
+  torrent:
+    user: root
+    image: wernight/qbittorrent
+    ports:
+      - 8080:8080
+      - 6881:6881/tcp
+      - 6881:6881/udp
+    volumes:
+      - ./config:/config
+      - ./torrents:/torrents
+      - ./movies:/downloads
+    restart: always
+
